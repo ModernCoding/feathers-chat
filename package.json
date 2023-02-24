@@ -36,8 +36,11 @@
   "main": "src/client",
   "type": "module",
   "scripts": {
-    "start": "node src",
-    "dev": "nodemon src/",
+    "build": "docker-compose build",
+    "start": "docker-compose up -d && node src",
+    "restop": "docker restart feathers_chat_api feathers_chat_db",
+    "stop": "docker stop feathers_chat_api feathers_chat_db",
+    "dev": "docker-compose up -d && nodemon src/",
     "prettier": "npx prettier \"**/*.js\" --write",
     "mocha": "cross-env NODE_ENV=test mocha test/ --recursive --exit",
     "test": "cross-env NODE_ENV=test npm run migrate && npm run mocha",
