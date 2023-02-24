@@ -2,6 +2,7 @@
 import { authenticate } from '@feathersjs/authentication'
 
 import { hooks as schemaHooks } from '@feathersjs/schema'
+
 import {
   messageDataValidator,
   messagePatchValidator,
@@ -14,6 +15,7 @@ import {
 } from './messages.schema.js'
 import { MessageService, getOptions } from './messages.class.js'
 import { messagePath, messageMethods } from './messages.shared.js'
+import { logRuntime } from '../../hooks/log-runtime.js'
 
 export * from './messages.class.js'
 export * from './messages.schema.js'
@@ -31,17 +33,27 @@ export const message = (app) => {
   app.service(messagePath).hooks({
     around: {
       all: [
+        logRuntime,
         authenticate('jwt'),
         schemaHooks.resolveExternal(messageExternalResolver),
         schemaHooks.resolveResult(messageResolver)
       ]
     },
     before: {
-      all: [schemaHooks.validateQuery(messageQueryValidator), schemaHooks.resolveQuery(messageQueryResolver)],
+      all: [
+        schemaHooks.validateQuery(messageQueryValidator),
+        schemaHooks.resolveQuery(messageQueryResolver)
+      ],
       find: [],
       get: [],
-      create: [schemaHooks.validateData(messageDataValidator), schemaHooks.resolveData(messageDataResolver)],
-      patch: [schemaHooks.validateData(messagePatchValidator), schemaHooks.resolveData(messagePatchResolver)],
+      create: [
+        schemaHooks.validateData(messageDataValidator),
+        schemaHooks.resolveData(messageDataResolver)
+      ],
+      patch: [
+        schemaHooks.validateData(messagePatchValidator),
+        schemaHooks.resolveData(messagePatchResolver)
+      ],
       remove: []
     },
     after: {
